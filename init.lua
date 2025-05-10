@@ -235,6 +235,21 @@ require('lazy').setup({
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     'sindrets/diffview.nvim', -- Neovim diff plugin
+    'github/copilot.vim',
+    {
+        'CopilotC-Nvim/CopilotChat.nvim',
+        dependencies = {
+            { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
+            { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log and async functions
+        },
+        build = 'make tiktoken', -- Only on MacOS or Linux
+        opts = {
+            -- See Configuration section for options
+        },
+        vim.keymap.set('n', '<leader>cc', '<cmd>CopilotChatToggle<CR>', { desc = '[C]opilot [C]hat Toggle' }),
+        vim.keymap.set('v', '<leader>ce', ':CopilotChatExplain<CR>', { desc = '[C]opilot [E]xplain (visual)' }),
+        vim.keymap.set('n', '<leader>cq', '<cmd>CopilotChatQuick<CR>', { desc = '[C]opilot [Q]uick Chat' }),
+    },
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following
     -- keys can be used to configure plugin behavior/loading/etc.
