@@ -194,6 +194,11 @@ vim.keymap.set('n', '[b', '<cmd>:bprevious<CR>', { desc = 'Switch to previous bu
 vim.keymap.set('n', ']b', '<cmd>:bnext<CR>', { desc = 'Switch to next buffer.' })
 vim.keymap.set('n', '[B', '<cmd>:bfirst<CR>', { desc = 'Switch to first buffer.' })
 vim.keymap.set('n', ']B', '<cmd>:blast<CR>', { desc = 'Switch to last buffer.' })
+vim.keymap.set('n', '<leader>cp', function()
+    local path = vim.fn.expand '%:p'
+    vim.fn.setreg('+', path)
+    vim.notify('Copied path: ' .. path)
+end, { desc = '[C]opy current [P]ath to clipboard' })
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -249,6 +254,8 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>cc', '<cmd>CopilotChatToggle<CR>', { desc = '[C]opilot [C]hat Toggle' }),
         vim.keymap.set('v', '<leader>ce', ':CopilotChatExplain<CR>', { desc = '[C]opilot [E]xplain (visual)' }),
         vim.keymap.set('n', '<leader>cq', '<cmd>CopilotChatQuick<CR>', { desc = '[C]opilot [Q]uick Chat' }),
+        vim.keymap.set('n', '<leader>c?', '<cmd>CopilotChat<CR>', { desc = '[C]opilot [C]hat' }),
+        vim.keymap.set('n', '<leader>cf', '<cmd>CopilotChatFix<CR>', { desc = '[C]opilot [F]ix' }),
     },
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following
