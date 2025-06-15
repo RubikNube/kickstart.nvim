@@ -24,7 +24,7 @@ What is Kickstart?
 
   Kickstart.nvim is *not* a distribution.
 
-  Kickstart.nvim is a starting point for your own configuration.
+  Kickstart.nvim is a starting point for your own configuration.neovim
     The goal is that you can read every line of code, top-to-bottom, understand
     what your configuration is doing, and modify it to suit your needs.
 
@@ -180,6 +180,38 @@ vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+
+-- Basic tab navigation
+vim.keymap.set('n', '<leader>tt', '<cmd>tabnew<CR>', { desc = '[T]ab [T]abnew' })
+vim.keymap.set('n', '<leader>to', '<cmd>tabonly<CR>', { desc = '[T]ab [O]nly' })
+vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' })
+vim.keymap.set('n', '<leader>tp', '<cmd>tabprevious<CR>', { desc = '[T]ab [P]revious' })
+vim.keymap.set('n', '<leader>tP', '<cmd>tabnext<CR>', { desc = '[T]ab [P]revious (reverse)' })
+vim.keymap.set('n', '<leader>tn', '<cmd>tabnext<CR>', { desc = '[T]ab [N]ext' })
+vim.keymap.set('n', '<leader>tN', '<cmd>tabprevious<CR>', { desc = '[T]ab [N]ext (revserse)' })
+vim.keymap.set('n', '<leader>th', '<cmd>tabmove -1<CR>', { desc = '[T]ab Move Left (H)' })
+vim.keymap.set('n', '<leader>tl', '<cmd>tabmove +1<CR>', { desc = '[T]ab Move Right (L)' })
+vim.keymap.set('n', '<leader>t1', '<cmd>tabfirst<CR>', { desc = '[T]ab [1] First' })
+vim.keymap.set('n', '<leader>t2', '<cmd>tabnext 2<CR>', { desc = '[T]ab [2] Next' })
+vim.keymap.set('n', '<leader>t3', '<cmd>tabnext 3<CR>', { desc = '[T]ab [3] Next' })
+vim.keymap.set('n', '<leader>t4', '<cmd>tabnext 4<CR>', { desc = '[T]ab [4] Next' })
+vim.keymap.set('n', '<leader>t5', '<cmd>tabnext 5<CR>', { desc = '[T]ab [5] Next' })
+vim.keymap.set('n', '<leader>t6', '<cmd>tabnext 6<CR>', { desc = '[T]ab [6] Next' })
+vim.keymap.set('n', '<leader>t7', '<cmd>tabnext 7<CR>', { desc = '[T]ab [7] Next' })
+vim.keymap.set('n', '<leader>t8', '<cmd>tabnext 8<CR>', { desc = '[T]ab [8] Next' })
+vim.keymap.set('n', '<leader>t9', '<cmd>tablast<CR>', { desc = '[T]ab [9] Last' })
+
+-- Basic path navigation
+vim.keymap.set('n', '<leader>cdg', function()
+    local dir = vim.fn.expand '%:p:h'
+    vim.cmd.cd(dir)
+    vim.notify('Changed directory to: ' .. dir)
+end, { desc = '[C]hange [D]irectory [G]lobal to current file path' })
+vim.keymap.set('n', '<leader>cdt', function()
+    local dir = vim.fn.expand '%:p:h'
+    vim.cmd.tcd(dir)
+    vim.notify('Changed terminal directory to: ' .. dir)
+end, { desc = '[C]hange [D]irectory of [T]ab to current file path' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
