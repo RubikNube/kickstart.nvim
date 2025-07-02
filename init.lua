@@ -289,6 +289,24 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>c?', '<cmd>CopilotChat<CR>', { desc = '[C]opilot [C]hat' }),
         vim.keymap.set('n', '<leader>cf', '<cmd>CopilotChatFix<CR>', { desc = '[C]opilot [F]ix' }),
     },
+    -- GO plugins
+    {
+        'ray-x/go.nvim',
+        ft = { 'go', 'gomod', 'gowork', 'gotmpl' },
+        dependencies = {
+            -- Go tools
+            'ray-x/guihua.lua',
+            'nvim-lua/plenary.nvim',
+            'nvim-treesitter/nvim-treesitter',
+            'neovim/nvim-lspconfig',
+            'williamboman/mason.nvim',
+            'williamboman/mason-lspconfig.nvim',
+        },
+        opts = {
+            lsp_cfg = true, -- Enable LSP configuration
+            dap_cfg = true, -- Enable DAP configuration
+        },
+    },
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following
     -- keys can be used to configure plugin behavior/loading/etc.
@@ -797,6 +815,7 @@ require('lazy').setup({
             end,
             formatters_by_ft = {
                 lua = { 'stylua' },
+                json = { 'prettier' },
                 -- Conform can also run multiple formatters sequentially
                 -- python = { "isort", "black" },
                 --
