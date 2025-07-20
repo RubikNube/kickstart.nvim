@@ -83,7 +83,8 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
-
+-- Debugging
+-- require 'dap-go'
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -222,10 +223,38 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+vim.keymap.set('n', '<F5>', function()
+    require('dap').continue()
+end, { desc = 'DAP: Continue/Start Debugging' })
+vim.keymap.set('n', '<F10>', function()
+    require('dap').step_over()
+end, { desc = 'DAP: Step Over' })
+vim.keymap.set('n', '<F11>', function()
+    require('dap').step_into()
+end, { desc = 'DAP: Step Into' })
+vim.keymap.set('n', '<F12>', function()
+    require('dap').step_out()
+end, { desc = 'DAP: Step Out' })
+vim.keymap.set('n', '<Leader>b', function()
+    require('dap').toggle_breakpoint()
+end, { desc = 'DAP: Toggle Breakpoint' })
+vim.keymap.set('n', '<Leader>B', function()
+    require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
+end, { desc = 'DAP: Set Conditional Breakpoint' })
 vim.keymap.set('n', '[b', '<cmd>:bprevious<CR>', { desc = 'Switch to previous buffer.' })
 vim.keymap.set('n', ']b', '<cmd>:bnext<CR>', { desc = 'Switch to next buffer.' })
 vim.keymap.set('n', '[B', '<cmd>:bfirst<CR>', { desc = 'Switch to first buffer.' })
 vim.keymap.set('n', ']B', '<cmd>:blast<CR>', { desc = 'Switch to last buffer.' })
+-- Copy the quickfix list to the default buffer
+vim.keymap.set('n', '<leader>qc', function()
+    local qflist = vim.fn.getqflist()
+    if #qflist == 0 then
+        vim.notify 'Quickfix list is empty.'
+        return
+    end
+    vim.fn.setreg('+', vim.fn.join(vim.fn.map(qflist, 'v:val.text'), '\n'))
+    vim.notify 'Copied quickfix list to clipboard.'
+end, { desc = '[Q]uickfix [C]opy to clipboard' })
 vim.keymap.set('n', '<leader>cp', function()
     local path = vim.fn.expand '%:p'
     vim.fn.setreg('+', path)
@@ -307,6 +336,20 @@ require('lazy').setup({
             dap_cfg = true, -- Enable DAP configuration
         },
     },
+    -- Debugging plugins
+    {
+        'mfussenegger/nvim-dap',
+        config = function()
+            require 'dap-config'
+        end,
+    },
+    {
+        'leoluz/nvim-dap-go',
+        config = function()
+            require('dap-go').setup()
+        end,
+    },
+
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following
     -- keys can be used to configure plugin behavior/loading/etc.
@@ -499,6 +542,7 @@ require('lazy').setup({
             vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
             vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
             vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+            vim.keymap.set('n', '<leader>sv', builtin.lsp_document_symbols, { desc = '[S]earch [V]iew Document Symbols' })
 
             -- Slightly advanced example of overriding default behavior and theme
             vim.keymap.set('n', '<leader>/', function()
@@ -816,6 +860,7 @@ require('lazy').setup({
             formatters_by_ft = {
                 lua = { 'stylua' },
                 json = { 'prettier' },
+                go = { 'goimports' },
                 -- Conform can also run multiple formatters sequentially
                 -- python = { "isort", "black" },
                 --
