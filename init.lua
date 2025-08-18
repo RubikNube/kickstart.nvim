@@ -223,24 +223,6 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
-vim.keymap.set('n', '<F5>', function()
-    require('dap').continue()
-end, { desc = 'DAP: Continue/Start Debugging' })
-vim.keymap.set('n', '<F10>', function()
-    require('dap').step_over()
-end, { desc = 'DAP: Step Over' })
-vim.keymap.set('n', '<F11>', function()
-    require('dap').step_into()
-end, { desc = 'DAP: Step Into' })
-vim.keymap.set('n', '<F12>', function()
-    require('dap').step_out()
-end, { desc = 'DAP: Step Out' })
-vim.keymap.set('n', '<Leader>b', function()
-    require('dap').toggle_breakpoint()
-end, { desc = 'DAP: Toggle Breakpoint' })
-vim.keymap.set('n', '<Leader>B', function()
-    require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
-end, { desc = 'DAP: Set Conditional Breakpoint' })
 vim.keymap.set('n', '[b', '<cmd>:bprevious<CR>', { desc = 'Switch to previous buffer.' })
 vim.keymap.set('n', ']b', '<cmd>:bnext<CR>', { desc = 'Switch to next buffer.' })
 vim.keymap.set('n', '[B', '<cmd>:bfirst<CR>', { desc = 'Switch to first buffer.' })
@@ -299,6 +281,17 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
+    -- Debugging plugins
+    {
+        'mfussenegger/nvim-dap',
+    },
+    {
+        'leoluz/nvim-dap-go',
+        config = function()
+            require('dap-go').setup()
+            require 'dap-config'
+        end,
+    },
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     'sindrets/diffview.nvim', -- Neovim diff plugin
     'github/copilot.vim',
@@ -333,21 +326,7 @@ require('lazy').setup({
         },
         opts = {
             lsp_cfg = true, -- Enable LSP configuration
-            dap_cfg = true, -- Enable DAP configuration
         },
-    },
-    -- Debugging plugins
-    {
-        'mfussenegger/nvim-dap',
-        config = function()
-            require 'dap-config'
-        end,
-    },
-    {
-        'leoluz/nvim-dap-go',
-        config = function()
-            require('dap-go').setup()
-        end,
     },
 
     -- NOTE: Plugins can also be added by using a table,
