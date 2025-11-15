@@ -986,7 +986,25 @@ require('lazy').setup({
             vim.cmd.hi 'Comment gui=none'
         end,
     },
-
+    {
+        'luisiacc/the-matrix.nvim',
+        priority = 1001,
+        init = function()
+            vim.cmd.colorscheme 'thematrix'
+        end,
+    },
+    {
+        'navarasu/onedark.nvim',
+        priority = 1002,
+        config = function()
+            require('onedark').setup {
+                style = 'darker',
+            }
+        end,
+        init = function()
+            vim.cmd.colorscheme 'onedark'
+        end,
+    },
     -- Highlight todo, notes, etc in comments
     { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -1040,7 +1058,22 @@ require('lazy').setup({
         main = 'nvim-treesitter.configs', -- Sets main module to use for opts
         -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
         opts = {
-            ensure_installed = { 'bash', 'c', 'diff', 'go', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+            ensure_installed = {
+                'angular',
+                'bash',
+                'c',
+                'diff',
+                'go',
+                'html',
+                'lua',
+                'luadoc',
+                'markdown',
+                'markdown_inline',
+                'typescript',
+                'query',
+                'vim',
+                'vimdoc',
+            },
             auto_install = true,
             highlight = {
                 enable = true,
