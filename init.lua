@@ -297,7 +297,6 @@ require('lazy').setup({
         end,
     },
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-    'sindrets/diffview.nvim', -- Neovim diff plugin
     'github/copilot.vim',
     {
         'CopilotC-Nvim/CopilotChat.nvim',
@@ -968,16 +967,6 @@ require('lazy').setup({
                 },
             }
         end,
-    },
-    -- Highlight todo, notes, etc in comments
-    { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
-    {
-        'iamcco/markdown-preview.nvim',
-        build = function()
-            vim.fn['mkdp#util#install']()
-        end,
-        ft = { 'markdown' },
     },
     { -- Collection of various small independent plugins/modules
         'echasnovski/mini.nvim',
