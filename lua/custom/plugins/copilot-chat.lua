@@ -15,4 +15,5 @@ return {
     vim.keymap.set('v', '<leader>ce', ':CopilotChatExplain<CR>', { desc = '[C]opilot [E]xplain (visual)' }),
     vim.keymap.set('v', '<leader>co', '<cmd>CopilotChatOptimize<CR>', { desc = '[C]opilot [O]ptimize' }),
     vim.keymap.set('v', '<leader>cp', '<cmd>CopilotChatPrompt<CR>', { desc = '[C]opilot [P]rompt' }),
+    vim.keymap.set('v', '<leader>ct', '<cmd>CopilotChatTest<CR>', { desc = '[C]opilot [T]est' }),
 }
