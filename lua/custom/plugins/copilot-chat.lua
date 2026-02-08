@@ -16,4 +16,10 @@ return {
     vim.keymap.set('v', '<leader>co', '<cmd>CopilotChatOptimize<CR>', { desc = '[C]opilot [O]ptimize' }),
     vim.keymap.set('v', '<leader>cp', '<cmd>CopilotChatPrompt<CR>', { desc = '[C]opilot [P]rompt' }),
     vim.keymap.set('v', '<leader>ct', '<cmd>CopilotChatTest<CR>', { desc = '[C]opilot [T]est' }),
+    vim.keymap.set(
+        'n',
+        '<leader>cD',
+        '<cmd>CopilotChat #buffers:visible Create a data flow diagram in mermaid syntax for the current opened file<CR>',
+        { desc = '[C]opilot Create [D]ata flow diagram (mermaid)' }
+    ),
 }
