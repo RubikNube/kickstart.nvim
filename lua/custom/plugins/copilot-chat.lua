@@ -22,4 +22,10 @@ return {
         '<cmd>CopilotChat #buffers:visible Create a data flow diagram in mermaid syntax for the current opened file<CR>',
         { desc = '[C]opilot Create [D]ata flow diagram (mermaid)' }
     ),
+    vim.keymap.set(
+        'n',
+        '<leader>cR',
+        '<cmd>CopilotChat #buffers:listed ##git://diff/staged Review the staged changes and provide feedback on potential issues or improvements. Focus on: correctness, edge cases, security, performance, readability, maintainability. Call out potential bugs and suggest concrete improvements.<CR>',
+        { desc = '[C]opilot [R]eview staged changes' }
+    ),
 }

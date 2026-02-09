@@ -53,6 +53,10 @@ vim.keymap.set('n', '<leader>cdt', function()
     vim.notify('Changed terminal directory to: ' .. dir)
 end, { desc = '[C]hange [D]irectory of [T]ab to current file path' })
 
+-- Git Diffview keymaps
+vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<CR>', { desc = '[G]it [D]iffview Open' })
+vim.keymap.set('n', '<leader>gD', '<cmd>DiffviewClose<CR>', { desc = '[G]it [D]iffview Close' })
+
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
