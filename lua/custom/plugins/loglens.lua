@@ -20,5 +20,7 @@ return {
         vim.keymap.set('n', '<leader>lE', ':LogLensConfigureClose<CR>', { desc = 'LogLens: Close pattern editor' })
         vim.keymap.set('n', '<leader>ll', ':LogLensLoad<CR>', { desc = 'LogLens: Load pattern config' })
         vim.keymap.set('n', '<leader>ls', ':LogLensSave<CR>', { desc = 'LogLens: Save pattern config' })
+        vim.keymap.set('n', '<leader>lx', ':LogLensClear<CR>', { desc = 'LogLens: Clear all patterns/results' })
+        vim.keymap.set('v', '<leader>la', ':LogLensAddPatternFromSelection<CR>', { desc = 'LogLens: Add pattern from visual selection' })
     end,
 }
