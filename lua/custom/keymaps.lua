@@ -85,3 +85,6 @@ vim.keymap.set('n', '<leader>cp', function()
     vim.fn.setreg('+', path)
     vim.notify('Copied path: ' .. path)
 end, { desc = '[C]opy current [P]ath to clipboard' })
+
+--  Open markdown preview
+vim.keymap.set('n', '<leader>mp', '<cmd>MarkdownPreviewToggle<CR>', { desc = '[M]arkdown [P]review Toggle' })
