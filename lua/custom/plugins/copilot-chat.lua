@@ -6,7 +6,7 @@ return {
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
-        model = 'gpt-5.2',
+        model = 'gpt-5.4',
     },
     vim.keymap.set('n', '<leader>cc', '<cmd>CopilotChatToggle<CR>', { desc = '[C]opilot [C]hat Toggle' }),
     vim.keymap.set('n', '<leader>cm', '<cmd>CopilotChatModel<CR>', { desc = '[C]opilot [M]odel' }),
