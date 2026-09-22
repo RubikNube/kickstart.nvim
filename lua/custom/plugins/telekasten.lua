@@ -1,5 +1,47 @@
 local vault = vim.fs.normalize(vim.fn.expand '~/zettelkasten')
 local note_template = vault .. '/templates/note.md'
+local ticket_template = vault .. '/templates/ticket.md'
+
+local function render_template(template, replacements)
+    if vim.fn.filereadable(template) ~= 1 then
+        vim.notify('Telekasten note template not found: ' .. template, vim.log.levels.ERROR)
+        return
+    end
+
+    return vim.tbl_map(function(line)
+        for name, value in pairs(replacements) do
+            line = line:gsub('{{' .. name .. '}}', function()
+                return value
+            end)
+        end
+        return line
+    end, vim.fn.readfile(template))
+end
+
+local function write_note(filepath, template, replacements)
+    if vim.fn.filereadable(filepath) == 1 then
+        vim.cmd.edit(vim.fn.fnameescape(filepath))
+        return true
+    end
+
+    local lines = render_template(template, replacements)
+    if lines == nil then
+        return false
+    end
+
+    vim.fn.mkdir(vim.fs.dirname(filepath), 'p')
+    if vim.fn.writefile(lines, filepath) ~= 0 then
+        vim.notify('Could not create note: ' .. filepath, vim.log.levels.ERROR)
+        return false
+    end
+
+    vim.cmd.edit(vim.fn.fnameescape(filepath))
+    return true
+end
+
+local function yaml_escape(value)
+    return value:gsub('\\', '\\\\'):gsub('"', '\\"')
+end
 
 local function create_note_in(directory)
     directory = vim.fs.normalize(directory)
@@ -25,16 +67,6 @@ local function create_note_in(directory)
             return
         end
 
-        if vim.fn.filereadable(filepath) == 1 then
-            vim.cmd.edit(vim.fn.fnameescape(filepath))
-            return
-        end
-
-        if vim.fn.filereadable(note_template) ~= 1 then
-            vim.notify('Telekasten note template not found: ' .. note_template, vim.log.levels.ERROR)
-            return
-        end
-
         local shorttitle = vim.fn.fnamemodify(title, ':t')
         if shorttitle == '' or shorttitle == '.' or shorttitle == '..' then
             vim.notify('Note title must include a filename', vim.log.levels.ERROR)
@@ -42,26 +74,62 @@ local function create_note_in(directory)
         end
 
         local date = os.date '%Y-%m-%d'
-        local lines = vim.tbl_map(function(line)
-            return line
-                :gsub('{{title}}', function()
-                    return title
-                end)
-                :gsub('{{shorttitle}}', function()
-                    return shorttitle
-                end)
-                :gsub('{{date}}', function()
-                    return date
-                end)
-        end, vim.fn.readfile(note_template))
+        write_note(filepath, note_template, {
+            title = title,
+            shorttitle = shorttitle,
+            date = date,
+        })
+    end)
+end
 
-        vim.fn.mkdir(vim.fs.dirname(filepath), 'p')
-        if vim.fn.writefile(lines, filepath) ~= 0 then
-            vim.notify('Could not create note: ' .. filepath, vim.log.levels.ERROR)
+local function create_ticket_note()
+    local jira_base_url = vim.trim(vim.env.JIRA_BASE_URL or ''):gsub('/+$', '')
+    if jira_base_url == '' then
+        vim.notify('JIRA_BASE_URL is not set', vim.log.levels.ERROR)
+        return
+    end
+
+    vim.ui.input({ prompt = 'Jira ticket: ' }, function(input)
+        if input == nil then
             return
         end
 
-        vim.cmd.edit(vim.fn.fnameescape(filepath))
+        local ticket = vim.trim(input):upper()
+        if ticket == '' then
+            return
+        end
+
+        if not ticket:match '^[A-Z][A-Z0-9_]*%-%d+$' then
+            vim.notify('Invalid Jira ticket key: ' .. ticket, vim.log.levels.ERROR)
+            return
+        end
+
+        local filepath = vault .. '/tickets/' .. ticket .. '.md'
+        if vim.fn.filereadable(filepath) == 1 then
+            vim.cmd.edit(vim.fn.fnameescape(filepath))
+            return
+        end
+
+        vim.ui.input({ prompt = 'Summary: ' }, function(summary_input)
+            if summary_input == nil then
+                return
+            end
+
+            local summary = vim.trim(summary_input)
+            if summary == '' then
+                return
+            end
+
+            local jira_url = jira_base_url .. '/browse/' .. ticket
+            write_note(filepath, ticket_template, {
+                title = yaml_escape(ticket .. ': ' .. summary),
+                ticket = ticket,
+                summary = summary,
+                yaml_summary = yaml_escape(summary),
+                jira_url = jira_url,
+                date = os.date '%Y-%m-%d',
+            })
+        end)
     end)
 end
 
@@ -113,6 +181,7 @@ return {
         { '<leader>zn', '<cmd>Telekasten new_note<CR>', desc = '[Z]ettelkasten [N]ew note' },
         { '<leader>zb', '<cmd>Telekasten show_backlinks<CR>', desc = '[Z]ettelkasten [B]acklinks' },
         { '<leader>zt', '<cmd>Telekasten show_tags<CR>', desc = '[Z]ettelkasten [T]ags' },
+        { '<leader>zj', create_ticket_note, desc = '[Z]ettelkasten new [J]ira ticket' },
         { '<leader>zi', '<cmd>Telekasten insert_link<CR>', desc = '[Z]ettelkasten [I]nsert link' },
         { '<leader>zy', '<cmd>Telekasten yank_notelink<CR>', desc = '[Z]ettelkasten [Y]ank note link' },
         { '<leader>zr', '<cmd>Telekasten rename_note<CR>', desc = '[Z]ettelkasten [R]ename note' },
