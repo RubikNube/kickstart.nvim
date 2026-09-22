@@ -1,9 +1,75 @@
+local vault = vim.fs.normalize(vim.fn.expand '~/zettelkasten')
+local note_template = vault .. '/templates/note.md'
+
+local function create_note_in(directory)
+    directory = vim.fs.normalize(directory)
+
+    vim.ui.input({ prompt = 'Title: ', completion = 'file' }, function(input)
+        if input == nil then
+            return
+        end
+
+        local title = vim.trim(input):gsub('%.md$', '')
+        if title == '' then
+            return
+        end
+
+        if title:match '^[/~]' or title:match '^%a:[/\\]' then
+            vim.notify('Note title must be relative to the target directory', vim.log.levels.ERROR)
+            return
+        end
+
+        local filepath = vim.fs.normalize(directory .. '/' .. title .. '.md')
+        if not vim.startswith(filepath, directory .. '/') then
+            vim.notify('Note title cannot leave the target directory', vim.log.levels.ERROR)
+            return
+        end
+
+        if vim.fn.filereadable(filepath) == 1 then
+            vim.cmd.edit(vim.fn.fnameescape(filepath))
+            return
+        end
+
+        if vim.fn.filereadable(note_template) ~= 1 then
+            vim.notify('Telekasten note template not found: ' .. note_template, vim.log.levels.ERROR)
+            return
+        end
+
+        local shorttitle = vim.fn.fnamemodify(title, ':t')
+        if shorttitle == '' or shorttitle == '.' or shorttitle == '..' then
+            vim.notify('Note title must include a filename', vim.log.levels.ERROR)
+            return
+        end
+
+        local date = os.date '%Y-%m-%d'
+        local lines = vim.tbl_map(function(line)
+            return line
+                :gsub('{{title}}', function()
+                    return title
+                end)
+                :gsub('{{shorttitle}}', function()
+                    return shorttitle
+                end)
+                :gsub('{{date}}', function()
+                    return date
+                end)
+        end, vim.fn.readfile(note_template))
+
+        vim.fn.mkdir(vim.fs.dirname(filepath), 'p')
+        if vim.fn.writefile(lines, filepath) ~= 0 then
+            vim.notify('Could not create note: ' .. filepath, vim.log.levels.ERROR)
+            return
+        end
+
+        vim.cmd.edit(vim.fn.fnameescape(filepath))
+    end)
+end
+
 return {
     'nvim-telekasten/telekasten.nvim',
     cmd = 'Telekasten',
     dependencies = { 'nvim-telescope/telescope.nvim' },
     init = function()
-        local vault = vim.fs.normalize(vim.fn.expand '~/zettelkasten')
         local templates = vault .. '/templates/'
 
         local group = vim.api.nvim_create_augroup('telekasten_updated_date', { clear = true })
@@ -54,28 +120,26 @@ return {
         {
             '<leader>zN',
             function()
-                require('telekasten').new_note { home = vim.fn.expand '~/zettelkasten/inbox' }
+                create_note_in(vault .. '/inbox')
             end,
             desc = '[Z]ettelkasten new i[N]box note',
         },
         {
             '<leader>zp',
             function()
-                require('telekasten').new_note { home = vim.fn.expand '~/zettelkasten/projects' }
+                create_note_in(vault .. '/projects')
             end,
             desc = '[Z]ettelkasten new [P]roject note',
         },
         { '[[', '<cmd>Telekasten insert_link<CR>', mode = 'i', desc = 'Insert Telekasten link' },
     },
     opts = function()
-        local home = vim.fn.expand '~/zettelkasten'
-
         return {
-            home = home,
-            dailies = home .. '/journal/daily',
-            templates = home .. '/templates',
-            template_new_note = home .. '/templates/note.md',
-            template_new_daily = home .. '/templates/daily.md',
+            home = vault,
+            dailies = vault .. '/journal/daily',
+            templates = vault .. '/templates',
+            template_new_note = note_template,
+            template_new_daily = vault .. '/templates/daily.md',
             image_subdir = 'attachments',
             new_note_filename = 'title',
         }
