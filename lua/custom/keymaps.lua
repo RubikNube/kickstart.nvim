@@ -80,6 +80,11 @@ vim.keymap.set('n', '<leader>qc', function()
     vim.fn.setreg('+', vim.fn.join(vim.fn.map(qflist, 'v:val.text'), '\n'))
     vim.notify 'Copied quickfix list to clipboard.'
 end, { desc = '[Q]uickfix [C]opy to clipboard' })
+
+vim.keymap.set('n', '<leader>gb', function()
+    require('gitsigns').toggle_current_line_blame()
+end, { desc = '[G]it [B]lame current line' })
+
 vim.keymap.set('n', '<leader>cp', function()
     local path = vim.fn.expand '%:p'
     vim.fn.setreg('+', path)
