@@ -1,5 +1,6 @@
 local vault = vim.fs.normalize(vim.fn.expand '~/zettelkasten')
 local note_template = vault .. '/templates/note.md'
+local meeting_template = vault .. '/templates/meeting.md'
 local ticket_template = vault .. '/templates/ticket.md'
 
 local function render_template(template, replacements)
@@ -43,8 +44,9 @@ local function yaml_escape(value)
     return value:gsub('\\', '\\\\'):gsub('"', '\\"')
 end
 
-local function create_note_in(directory)
+local function create_note_in(directory, options)
     directory = vim.fs.normalize(directory)
+    options = options or {}
 
     vim.ui.input({ prompt = 'Title: ', completion = 'file' }, function(input)
         if input == nil then
@@ -61,7 +63,9 @@ local function create_note_in(directory)
             return
         end
 
-        local filepath = vim.fs.normalize(directory .. '/' .. title .. '.md')
+        local date = os.date '%Y-%m-%d'
+        local filename = options.filename and options.filename(title, date) or title
+        local filepath = vim.fs.normalize(directory .. '/' .. filename .. '.md')
         if not vim.startswith(filepath, directory .. '/') then
             vim.notify('Note title cannot leave the target directory', vim.log.levels.ERROR)
             return
@@ -73,13 +77,22 @@ local function create_note_in(directory)
             return
         end
 
-        local date = os.date '%Y-%m-%d'
-        write_note(filepath, note_template, {
+        write_note(filepath, options.template or note_template, {
             title = title,
             shorttitle = shorttitle,
+            yaml_title = yaml_escape(shorttitle),
             date = date,
         })
     end)
+end
+
+local function create_meeting_note()
+    create_note_in(vault .. '/meeting', {
+        template = meeting_template,
+        filename = function(title, date)
+            return date .. ' ' .. title
+        end,
+    })
 end
 
 local function create_ticket_note()
@@ -182,6 +195,7 @@ return {
         { '<leader>zb', '<cmd>Telekasten show_backlinks<CR>', desc = '[Z]ettelkasten [B]acklinks' },
         { '<leader>zt', '<cmd>Telekasten show_tags<CR>', desc = '[Z]ettelkasten [T]ags' },
         { '<leader>zj', create_ticket_note, desc = '[Z]ettelkasten new [J]ira ticket' },
+        { '<leader>zm', create_meeting_note, desc = '[Z]ettelkasten new [M]eeting' },
         { '<leader>zi', '<cmd>Telekasten insert_link<CR>', desc = '[Z]ettelkasten [I]nsert link' },
         { '<leader>zy', '<cmd>Telekasten yank_notelink<CR>', desc = '[Z]ettelkasten [Y]ank note link' },
         { '<leader>zr', '<cmd>Telekasten rename_note<CR>', desc = '[Z]ettelkasten [R]ename note' },
