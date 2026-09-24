@@ -310,7 +310,10 @@ end
 return {
     'nvim-telekasten/telekasten.nvim',
     cmd = 'Telekasten',
-    dependencies = { 'nvim-telescope/telescope.nvim' },
+    dependencies = {
+        'nvim-telescope/telescope.nvim',
+        'renerocksai/calendar-vim',
+    },
     init = function()
         local templates = vault .. '/templates/'
 
@@ -351,6 +354,7 @@ return {
         { '<leader>zf', '<cmd>Telekasten find_notes<CR>', desc = '[Z]ettelkasten [F]ind notes' },
         { '<leader>zg', '<cmd>Telekasten search_notes<CR>', desc = '[Z]ettelkasten [G]rep notes' },
         { '<leader>zd', '<cmd>Telekasten goto_today<CR>', desc = '[Z]ettelkasten to[D]ay' },
+        { '<leader>zc', '<cmd>Telekasten show_calendar<CR>', desc = '[Z]ettelkasten [C]alendar' },
         { '<leader>zz', '<cmd>Telekasten follow_link<CR>', desc = '[Z]ettelkasten follow link' },
         { '<leader>zn', '<cmd>Telekasten new_note<CR>', desc = '[Z]ettelkasten [N]ew note' },
         { '<leader>zb', '<cmd>Telekasten show_backlinks<CR>', desc = '[Z]ettelkasten [B]acklinks' },
@@ -387,6 +391,12 @@ return {
             template_new_daily = vault .. '/templates/daily.md',
             image_subdir = 'attachments',
             new_note_filename = 'title',
+            plug_into_calendar = true,
+            calendar_opts = {
+                weeknm = 4,
+                calendar_monday = 1,
+                calendar_mark = 'left-fit',
+            },
         }
     end,
 }
