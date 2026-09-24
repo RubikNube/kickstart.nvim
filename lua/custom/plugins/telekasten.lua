@@ -391,6 +391,7 @@ return {
             template_new_daily = vault .. '/templates/daily.md',
             image_subdir = 'attachments',
             new_note_filename = 'title',
+            tag_notation = 'yaml-bare',
             plug_into_calendar = true,
             calendar_opts = {
                 weeknm = 4,
